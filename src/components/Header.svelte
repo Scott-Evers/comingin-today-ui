@@ -1,22 +1,46 @@
 <script lang="ts">
- import { signOut } from 'firebase/auth'
-  import { Link, useNavigate } from 'svelte-navigator'
-  import { get_auth } from '../lib/fb_helper'
+  import { Link } from 'svelte-navigator'
+  import { createEventDispatcher } from 'svelte'
+  import Components from '.'
 
-  const navigate = useNavigate()
-  export let auth
+  export let user
 
-  const logout = () => {
-    signOut(auth)
-    navigate('/', { replace: false });
-  }
+  const dispatch = createEventDispatcher()
+  let flyover_visible = false
+
+  const toggle_flyover = () => flyover_visible = !flyover_visible
+
 </script>
 
 <header>
-  <nav>
-    <Link to="/">Home</Link>
-    <Link to="about">About</Link>
-    <Link to="calendar">Calendar</Link>
-  </nav>
-  <div on:click={logout}>Sign Out</div>
+  <div class="navbar">
+    {#if user}
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="about">About</Link>
+        <Link to="calendar">Calendar</Link>
+      </nav>
+      <div class="user_icon" on:click={toggle_flyover}>User Menu</div>
+    {:else}
+      <div></div>
+      <nav>
+        <Link to="/login">Login</Link>
+      </nav>
+      {/if}
+    {#if flyover_visible}
+      <Components.UserFlyover on:logout />
+    {/if}
+  </div>
+
 </header>
+
+<style>
+  .navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .user_icon {
+    cursor: pointer;
+  }
+</style>

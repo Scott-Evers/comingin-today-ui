@@ -8,21 +8,26 @@
   import { User } from './lib/stores'
 
   const auth = fb_helper.get_auth()
+  //  const navigate = useNavigate()
 
   setPersistence(auth, browserLocalPersistence)
   auth.onAuthStateChanged(user => {
     User.set(user)
   })
-  // TODO race condition between loading user from state and rendering routes on reload.  How do we hold of on procesing the route until user has loaded?
 
+  const handle_message = (e) => {
+    console.log(e)
+  }
+  const logout = () => {
+  }
 </script>
 
 <Router basepath="/" primary={false}>
   
   <main style="height: 100%;">
-    {#if (security.validate_user($User))}
-      <Components.Header auth={auth} />
-    {/if}
+      <Components.Header user={$User} on:logout={() => {
+        signOut(auth)
+      }} />
     <div class="content">
       <Route path="login">
         <Pages.Login auth={auth} />
@@ -34,6 +39,10 @@
   
       <Components.PrivateRoute path='/calendar' >
         <Pages.Calendar />
+      </Components.PrivateRoute>
+
+      <Components.PrivateRoute path='/profile' >
+        <Pages.Profile />
       </Components.PrivateRoute>
     </div>
     <Components.Footer />

@@ -5,6 +5,7 @@ import DayOfWeekCard from './DayOfWeekCard.svelte'
 import Month from './Month.svelte'
 import Week from './Week.svelte'
 import PrivateRoute from './PrivateRoute.svelte'
+import UserFlyover from './UserFlyover.svelte'
 
 export default {
   Header,
@@ -14,4 +15,5 @@ export default {
   Month,
   Week,
   PrivateRoute,
+  UserFlyover,
 }
