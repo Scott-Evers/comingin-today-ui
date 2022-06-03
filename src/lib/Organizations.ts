@@ -3,6 +3,7 @@ import type { FirebaseApp } from 'firebase/app'
 import type { User } from 'firebase/auth'
 import type { User as UserType } from 'firebase/auth'
 import { OrganizationUser } from './OrganizationUsers'
+import { Location } from './Locations'
 import { getDocs, getFirestore, connectFirestoreEmulator, collection, query, 
   where, setDoc, doc, addDoc, WithFieldValue, DocumentData, QueryDocumentSnapshot,
   SnapshotOptions, 
@@ -10,12 +11,13 @@ import { getDocs, getFirestore, connectFirestoreEmulator, collection, query,
   DocumentSnapshot,
   FieldValue,
   DocumentReference,
-  updateDoc} from 'firebase/firestore'
+  updateDoc,
+  deleteDoc} from 'firebase/firestore'
   
   
 export const orgConverter = {
   toFirestore(org: WithFieldValue<Organization>): DocumentData {
-    return {locations: org.Locations, name: org.Name};
+    return {name: org.Name};
   },
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
@@ -24,7 +26,6 @@ export const orgConverter = {
       const data = snapshot.data(options)!;
       let o = new Organization(null)
       o.ID = snapshot.id
-      o.Locations = data.locations
       o.Name = data.name
       return o
     }
@@ -61,6 +62,14 @@ export class Organization {
     if (!this.Members) this.Members = []
     if (!this.Locations) this.Locations = []
     if (this.Locations == undefined) this.Locations = []
+    if (this.Owners.length == 0) this.Owners.push(ou.ID) // force ownership
+    if (!this.ID) { // new Org.  Force user to be member, add default location
+      let loc = new Location(null)
+      loc.Name = 'Headquarters'
+      this.Locations.push(loc)
+      this.Members.push(ou.ID)
+    }
+    console.warn(this.Owners)
     if ( this.Owners.filter(owner => owner == ou.ID).length == 0) 
       this.Owners.push(ou.ID)
     if ( this.Members.filter(member => member == ou.ID).length == 0) 
@@ -73,32 +82,55 @@ export class Organization {
       await setDoc(org_doc.withConverter(orgConverter), this)
     } else {
       org_doc = await addDoc(orgRef.withConverter(orgConverter), this)
+      this.ID = org_doc.id
     }
     
     //save locations
+    this.Locations.forEach(loc => loc.save(this))
     
-    //save owners to user doc(s)
+    //save ownership to user doc(s)
     let user_snap : DocumentSnapshot
     let user_data : DocumentData
     for (let i = 0; i < this.Owners.length; i ++) {
       let owner_id = this.Owners[i]
+
+      // get the document from firestore
       user_snap = await OrganizationUser.get_raw(owner_id)
       user_data = await user_snap.data()
-      user_data.ownership.push(org_doc)
-      updateDoc(user_snap.ref,{ ownership:user_data.ownership })
+
+      //update the ownership if this is a new addition
+      let existing = user_data.ownership.filter(owned_group => owned_group.id == this.ID)
+      console.debug('owner exists?',existing,user_data.ownership)
+      if (existing.length == 0) {
+        user_data.ownership.push(org_doc)
+        updateDoc(user_snap.ref,{ ownership:user_data.ownership })
+      }
     }
-    //save owners to user doc(s)
+    // todo remove owners that have been removed
+
+    //save membership to user doc(s)
     for (let i = 0; i < this.Members.length; i ++) {
       let member_id = this.Members[i]
+
+      // get the document from firestore
       user_snap = await OrganizationUser.get_raw(member_id)
       user_data = await user_snap.data()
-      user_data.membership.push(org_doc)
-      updateDoc(user_snap.ref,{ membership:user_data.membership })
+
+      // update document if this is a new addition
+      if (user_data.membership.filter(member_of => member_of.id == this.ID).length == 0) {
+        user_data.membership.push(org_doc)
+        updateDoc(user_snap.ref,{ membership:user_data.membership })
+      }
     }
+    //todo remove members that have been removed
     
     
     // save location doc(s)
-    
+    this.Locations.forEach(loc => loc.save(this))
+  }
+
+  delete = async () => {
+    deleteDoc(doc(db,'organization',this.ID))
   }
   
   static async from_doc_id (user: User, id: string): Promise<Organization>  {
