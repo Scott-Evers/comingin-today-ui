@@ -1,4 +1,5 @@
 import type { User as UserType } from "firebase/auth";
+import type { OrganizationUser } from "./OrganizationUsers";
 import { writable, Writable, readable, get } from "svelte/store";
 
 

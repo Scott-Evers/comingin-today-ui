@@ -4,10 +4,12 @@
 	import Pages from './pages'
   import * as security from './lib/security'
   import * as fb_helper from './lib/fb_helper'
-  import { setPersistence, browserLocalPersistence, signOut } from 'firebase/auth'
+  import { setPersistence, browserLocalPersistence, signOut,
+    connectAuthEmulator } from 'firebase/auth'
   import { User } from './lib/stores'
 
   const auth = fb_helper.get_auth()
+  connectAuthEmulator(auth,'http://localhost:9099')
   //  const navigate = useNavigate()
 
   setPersistence(auth, browserLocalPersistence)
@@ -39,6 +41,10 @@
   
       <Components.PrivateRoute path='/calendar' >
         <Pages.Calendar />
+      </Components.PrivateRoute>
+
+      <Components.PrivateRoute path='/settings' >
+        <Pages.Settings />
       </Components.PrivateRoute>
 
       <Components.PrivateRoute path='/profile' >

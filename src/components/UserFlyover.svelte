@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Link, useNavigate } from 'svelte-navigator'
-  import { get_auth } from '../lib/fb_helper'
   import { createEventDispatcher } from 'svelte'
 
   const navigate = useNavigate()

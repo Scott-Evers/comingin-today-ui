@@ -6,6 +6,9 @@ import Month from './Month.svelte'
 import Week from './Week.svelte'
 import PrivateRoute from './PrivateRoute.svelte'
 import UserFlyover from './UserFlyover.svelte'
+import Organizations from './Organizations.svelte'
+import Organization from './Organization.svelte'
+
 
 export default {
   Header,
@@ -16,4 +19,6 @@ export default {
   Week,
   PrivateRoute,
   UserFlyover,
+  Organizations,
+  Organization,
 }

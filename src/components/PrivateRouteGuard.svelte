@@ -9,11 +9,9 @@
   
   let user_valid = false
   $:{ //todo this line updates on changes to variables on this line...watch $User
-    console.log('guard:user',$User)
+    //console.log('guard:user',$User)
     user_valid = security.validate_user($User)
-    console.log('guard:user_valid',user_valid)
-    // if (!user_valid) {
-      // }
+    //console.log('guard:user_valid',user_valid)
     }
   const send_to_login = () => {
     navigate("/login", {

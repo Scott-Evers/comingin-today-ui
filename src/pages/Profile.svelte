@@ -1,6 +1,6 @@
 <script lang="ts">
   import { User } from '../lib/stores'
-  import { User as UserType } from 'firebase/auth'
+  import type { User as UserType } from 'firebase/auth'
   
   let user: UserType
   $: user = $User

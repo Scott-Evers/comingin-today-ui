@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "emulate": "firebase emulators:start --import=emulator_data/ --export-on-exit=emulator_data/",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear --single --port 51640",

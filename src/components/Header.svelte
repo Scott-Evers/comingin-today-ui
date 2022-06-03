@@ -17,7 +17,7 @@
     {#if user}
       <nav>
         <Link to="/">Home</Link>
-        <Link to="about">About</Link>
+        <Link to="/settings">Settings</Link>
         <Link to="calendar">Calendar</Link>
       </nav>
       <div class="user_icon" on:click={toggle_flyover}>User Menu</div>

@@ -4,3 +4,6 @@
 .DS_Store
 
 sample.*.json
+*.log
+
+/emulator_data/
