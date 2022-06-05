@@ -1,33 +1,43 @@
 <script lang="ts">
-  import {Organization} from '../lib/Organizations'
+  import * as FBTypes from '../lib/fb_types'
   import {ScreenModes} from '../lib/enums'
   import {User} from '../lib/stores'
-  import type { OrganizationUser } from '../lib/OrganizationUsers';
+  import Subcollection from './Subcollection.svelte'
+  import type { DocumentReference } from 'firebase/firestore';
+  import LocationControl from './ItemControls/Location.svelte'
+  import OrganizationControl from './ItemControls/Organization.svelte'
 
-  export let org = new Organization($User)
-  export let org_user : OrganizationUser
+  export let org_ref : DocumentReference = null
   export let screen_mode : ScreenModes = ScreenModes.View
 
-  const create_org = async () => {
-    org.save(org_user)
-    screen_mode = ScreenModes.View
+  let org_ready : Promise<FBTypes.Organization>
+  let org : FBTypes.Organization
+  if (org_ref == null) {
+    org_ready = FBTypes.Organization.create_org($User.uid)
+  } else {
+    org_ready = FBTypes.Organization.load(org_ref)
   }
+
   const update_org = async () => {
-    org.save(org_user)
-    screen_mode = ScreenModes.View
+    try {
+      console.log(org)
+      org.save()
+      screen_mode = ScreenModes.View
+    } catch (e) {
+      console.error('Error saving organization:',e)
+    }
   }
+
 </script>
 
-{#if screen_mode == ScreenModes.Create}
-  <input bind:value={org.Name} placeholder="Name" />
-  <button on:click={create_org}>Create</button>
-{/if}
-
-{#if screen_mode == ScreenModes.Edit}
-  <input bind:value={org.Name} placeholder="Name" />
-  {JSON.stringify(org.Locations )}
-  {#each org.Locations as location}
-    <div>{location.Name}</div>
-  {/each}
+{#await org_ready}
+Loading organization
+{:then org_resolved}
+<OrganizationControl org={org_resolved} />
+<Subcollection title="Locations" items={org_resolved.Locations} 
+    item_control={LocationControl} />
+{#if screen_mode != ScreenModes.View}
   <button on:click={update_org}>Save</button>
 {/if}
+{/await}
+

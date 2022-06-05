@@ -1,7 +1,7 @@
 
   
 export const validate_user = (user): boolean => {
-  console.log('validate_user:user',user)
+  //console.debug('validate_user:user',user)
   if (user) {
     return true
   }

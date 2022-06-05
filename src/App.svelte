@@ -3,12 +3,12 @@
 	import Components from './components'
 	import Pages from './pages'
   import * as security from './lib/security'
-  import * as fb_helper from './lib/fb_helper'
+  import * as FBUtils from './lib/fb_util'
   import { setPersistence, browserLocalPersistence, signOut,
     connectAuthEmulator } from 'firebase/auth'
   import { User } from './lib/stores'
 
-  const auth = fb_helper.get_auth()
+  const auth = FBUtils.get_auth()
   connectAuthEmulator(auth,'http://localhost:9099')
   //  const navigate = useNavigate()
 

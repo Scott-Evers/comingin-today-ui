@@ -1,65 +1,61 @@
 <script lang="ts">
 
-import { OrganizationUser } from '../lib/OrganizationUsers'
-import type { Organization as OrganizationType } from '../lib/Organizations'
+import * as FBTypes from '../lib/fb_types'
 import { User } from '../lib/stores'
 import { ScreenModes } from "../lib/enums"
 import Components from '.'
-import Login from '../pages/Login.svelte';
-import { get_current_component } from 'svelte/internal';
-import App from '../App.svelte';
+import { each } from 'svelte/internal'
 import Organization from './Organization.svelte';
+import type { DocumentReference } from 'firebase/firestore';
 
 
 let screen_mode: ScreenModes = ScreenModes.View
 
-let ou: OrganizationUser = new OrganizationUser($User)
-let ouser: Promise<OrganizationUser> = OrganizationUser.get_current($User)
-let current_org : OrganizationType
+let org_promise: Promise<FBTypes.Organizations> = FBTypes.Organizations.memberships($User.uid)
+let current_org_ref : DocumentReference
 
-const create_org = () => {
-  screen_mode = ScreenModes.Create
-}
+
 const delete_org = (org) => {
   console.info('delete org',org)
   org.delete()
 }
 const edit_org = (org) => {
-  current_org = org
+  current_org_ref = org.ref
+  screen_mode = ScreenModes.Edit
+}
+const create_org = () => {
+  current_org_ref = null
   screen_mode = ScreenModes.Edit
 }
 </script>
 
-{#await ouser}
+{#await org_promise}
   Loading...
-{:then ou}
+{:then orgs}
 <div>
   {#if screen_mode == ScreenModes.View}
     <div class="managed_org_header">Managed Organizations</div>
-    {#each ou.ManagedOrgs as org}
-      <div class="managed_org_name">
-        {org.Name}
-        <button on:click={e => edit_org(org)}>edit</button>
-        <button on:click={e => delete_org(org)}>delete</button></div>
+    {#each orgs as org}
+        <div class="managed_org_name">
+          {org.Data.name}
+          <button on:click={e => edit_org(org)}>edit</button>
+          <button on:click={e => delete_org(org)}>delete</button>
+        </div>
     {/each}
+
     <div><button on:click={create_org}>Create</button></div>
+
     <div class="member_org_header">Organization Memberships</div>
-    {#each ou.MemberOrgs as org}
-      <div class="">{org.Name}</div>
-    {/each}
+    {#each orgs as org}
+      <div class="">{org.Data.name}</div>
+    {/each} 
     
   {/if}
-  
-  {#if screen_mode == ScreenModes.Create}
-    <Components.Organization org_user={ou} screen_mode={ScreenModes.Create} />
-  {/if}
-
-  {#if screen_mode == ScreenModes.Edit}
-    <Components.Organization org_user={ou} screen_mode={ScreenModes.Edit} org={current_org} />
+  {#if screen_mode != ScreenModes.View}
+     <Components.Organization bind:screen_mode={screen_mode} org_ref={current_org_ref} />
   {/if}
 </div>
 {:catch e}
-  {console.warn('ouser',ouser)}
   {console.error('error',e)}
 {/await}
 
@@ -67,5 +63,8 @@ const edit_org = (org) => {
   .managed_org_name {
     font-size: 1.5rem;
     cursor: pointer;
+  }
+  .member_org_name {
+    color: #888;
   }
 </style>

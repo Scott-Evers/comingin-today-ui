@@ -1,8 +1,7 @@
-import {FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app'
-import { initializeAuth, signInWithEmailAndPassword, User as UserType, UserCredential,
-          setPersistence, browserLocalPersistence, Auth, Dependencies } from 'firebase/auth'
-import { get } from 'svelte/store'
-import { User } from './stores'
+import { FirebaseApp, FirebaseOptions, initializeApp } from "firebase/app"
+import { Auth, Dependencies, browserLocalPersistence, initializeAuth, 
+  UserCredential, signInWithEmailAndPassword, User } from 'firebase/auth'
+
 
 export const get_app = (): FirebaseApp => {
   const options: FirebaseOptions = {
@@ -18,6 +17,7 @@ export const get_app = (): FirebaseApp => {
   //console.log('FIREBASE_APP', app)
   return app
 }
+
 export const get_auth = (): Auth => {
   let deps : Dependencies = {
     persistence: browserLocalPersistence
@@ -27,16 +27,7 @@ export const get_auth = (): Auth => {
   //console.log('FIREBASE_AUTH',auth)
   return auth
 }
-
-export const get_user = (): UserType => {
-  // let user: User = JSON.parse(localStorage.getItem('user'))
-  // return user
-  const u = get(User)
-  console.log('get_user:', u)
-  return u
-}
-
-export const authenticate_user_passwd = async (auth: Auth, email: string, password: string): Promise<UserType> => {
+export const authenticate_user_passwd = async (auth: Auth, email: string, password: string): Promise<User> => {
   try {
     
     //localStorage.setItem('user',JSON.stringify(user))
