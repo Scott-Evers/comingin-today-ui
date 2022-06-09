@@ -1,21 +1,39 @@
 <script lang="ts">
-  import type { Location } from '../../lib/fb_types'
-  export let location : Location
+  import type { Location as Loc } from '../../lib/fb_types'
+  import * as Buttons from '../Buttons'
+  export let item : Loc
+
+  console.log('location',item)
+
+  const reactivate = () => {
+    item.reactivate()
+    item.init(item.Ref).then(i => item = i)
+  }
+  const disable = () => {
+    item.delete()
+    item.init(item.Ref).then(i => item = i)
+  }
 </script>
 
-{location.Data.name}
 
-
-{#await location}
-{:then loc}
-  <div class="tr">
-    <div>
-      <input bind:value={location.Data.name} on:change={async e => {
-          console.log(location)
-          location = await location.save()
-      }
-        } placeholder="Location name" />
+    <div class="tr">
+      {#if item.Active}
+        <input bind:value={item.Name} on:change={async e => {
+                await item.save()
+            }
+          } placeholder="Location name" />
+          <div><Buttons.Remove on:click={disable} /></div>
+      {/if}
+      {#if !item.Active}
+      <div>{item.Name}</div>
+      <button on:click={reactivate}>reactivate</button>
+      {/if}
     </div>
-    <div><button>-</button></div>
-  </div>
-{/await}
+
+  <style>  
+    .tr {
+      display: flex;
+      flex-direction: row;
+      align-content: center;
+    }
+  </style>

@@ -2,6 +2,7 @@
   import { Link } from 'svelte-navigator'
   import { createEventDispatcher } from 'svelte'
   import Components from '.'
+  import * as Buttons from './Buttons'
 
   export let user
 
@@ -17,10 +18,10 @@
     {#if user}
       <nav>
         <Link to="/">Home</Link>
-        <Link to="/settings">Settings</Link>
         <Link to="calendar">Calendar</Link>
       </nav>
-      <div class="user_icon" on:click={toggle_flyover}>User Menu</div>
+      <Link to="/settings"><Buttons.Settings /></Link>
+      <Buttons.User on:click={toggle_flyover} />
     {:else}
       <div></div>
       <nav>
@@ -40,6 +41,11 @@
     flex-direction: row;
     justify-content: space-between;
   }
+  .navbar > nav {
+    display: flex;
+    flex-direction: row;    
+  }
+
   .user_icon {
     cursor: pointer;
   }

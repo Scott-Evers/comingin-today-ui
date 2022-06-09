@@ -1,3 +1,14 @@
+:root {
+	--accent-color-0: #331099;
+	--accent-color-1: #dd7711;
+	--accent-color-2: #11dd11;
+
+	--muted-color-0: #333;
+	--muted-color-1: #999;
+
+	--danger-color: #dd0000;
+}
+
 html, body {
 	position: relative;
 	width: 100%;
@@ -60,4 +71,25 @@ button:not(:disabled):active {
 
 button:focus {
 	border-color: #666;
+}
+
+h1 {
+	font-size: 2.5rem;
+}
+h2 {
+	font-size: 1.8rem;
+}
+
+nav div {
+  vertical-align: middle;
+}
+.round {
+	border-radius: 50%;
+}
+.image_button {
+	color: #fff;
+	margin: .2em;
+	cursor: pointer;
+	padding: .3em;
+	background-color: var(--muted-color-1)
 }

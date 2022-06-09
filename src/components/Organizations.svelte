@@ -1,26 +1,32 @@
 <script lang="ts">
 
 import * as FBTypes from '../lib/fb_types'
+import * as Buttons from './Buttons'
 import { User } from '../lib/stores'
 import { ScreenModes } from "../lib/enums"
 import Components from '.'
 import { each } from 'svelte/internal'
 import Organization from './Organization.svelte';
 import type { DocumentReference } from 'firebase/firestore';
+import App from '../App.svelte'
+import Add from './Buttons/Add.svelte';
+import Remove from './Buttons/Remove.svelte';
 
 
 let screen_mode: ScreenModes = ScreenModes.View
 
-let org_promise: Promise<FBTypes.Organizations> = FBTypes.Organizations.memberships($User.uid)
-let current_org_ref : DocumentReference
+let g_orgs : FBTypes.Orgs = new FBTypes.Orgs()
+let org_promise: Promise<FBTypes.Orgs> = g_orgs.get_by_member($User.uid)
+let current_org_ref : FBTypes.Org
 
-
+ 
 const delete_org = (org) => {
   console.info('delete org',org)
   org.delete()
 }
 const edit_org = (org) => {
-  current_org_ref = org.ref
+  console.log('Editing',org)
+  current_org_ref = org
   screen_mode = ScreenModes.Edit
 }
 const create_org = () => {
@@ -36,23 +42,23 @@ const create_org = () => {
   {#if screen_mode == ScreenModes.View}
     <div class="managed_org_header">Managed Organizations</div>
     {#each orgs as org}
-        <div class="managed_org_name">
-          {org.Data.name}
-          <button on:click={e => edit_org(org)}>edit</button>
-          <button on:click={e => delete_org(org)}>delete</button>
-        </div>
+      <div class="managed_org_name">
+        {org.Name}
+        <Buttons.Edit on:click={e => edit_org(org)} />
+        <Buttons.Remove on:click={e => delete_org(org)} />
+      </div>
     {/each}
 
-    <div><button on:click={create_org}>Create</button></div>
+    <div style="text-align: right;"><Buttons.Add style="font-size: 3.6rem;" on:click={create_org} /></div>
 
     <div class="member_org_header">Organization Memberships</div>
     {#each orgs as org}
-      <div class="">{org.Data.name}</div>
+      <div class="">{org.Name}</div>
     {/each} 
     
   {/if}
   {#if screen_mode != ScreenModes.View}
-     <Components.Organization bind:screen_mode={screen_mode} org_ref={current_org_ref} />
+     <Components.Organization bind:screen_mode={screen_mode} org={current_org_ref} />
   {/if}
 </div>
 {:catch e}
@@ -67,4 +73,5 @@ const create_org = () => {
   .member_org_name {
     color: #888;
   }
+
 </style>
