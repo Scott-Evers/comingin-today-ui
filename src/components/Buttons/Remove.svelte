@@ -5,7 +5,7 @@
 </script>
 
 
-<span class={classes.join(' ')} style={style}>delete</span>
+<span on:click class={classes.join(' ')} style={style}>delete</span>
 
 
 <style>

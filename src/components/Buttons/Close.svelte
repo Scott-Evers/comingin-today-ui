@@ -4,4 +4,4 @@
   classes.push(...['material-icons', 'round', 'image_button'])
 </script>
 
-<span on:click class={classes.join(' ')} {style}>settings</span>
+<span on:click class={classes.join(' ')} {style}>close</span>

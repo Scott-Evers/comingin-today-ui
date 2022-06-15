@@ -49,7 +49,7 @@ const converter = (t, mapping) => {
             r[key] = snapshot[mapping[key].key]
             break;
           case FIELD_TYPES.REF:
-            console.log('ref?',mapping[key].cls)
+            //console.log('ref?',mapping[key].cls)
             r[key] = getDoc(data[mapping[key].key].withConverter(mapping[key].cls.CONVERTER))
         }
       })
@@ -139,7 +139,7 @@ export class Orgs extends Array<Org> {
     for (let i = 0; i < docs.docs.length; i++) {
       let org = new Org()
       await org.init(docs.docs[i].ref.parent.parent)
-      console.log(org)
+      //console.log(org)
       this.push(org)
     }
     return this
@@ -213,7 +213,6 @@ export class Locations extends Array<Location> {
     const col = collection(db,org.Ref.path,Location.COLLECTION_NAME)
               .withConverter(Location.CONVERTER)
     let qr : QuerySnapshot = await getDocs(col)
-    console.log('qr',qr)
     qr.docs.forEach(result => r.push(new Location(result)))
     return r
   }

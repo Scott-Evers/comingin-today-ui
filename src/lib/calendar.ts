@@ -3,6 +3,7 @@ import { DateFocus } from './stores'
 export type DayType = {
   DayInMonth: number,
   DayInWeek: number,
+  Selected: boolean,
 }
 export enum CalType {
   Month,
@@ -30,7 +31,7 @@ export const update_date = (n: number, ctype: CalType): void => {
 }
 
 export const get_days_in_month = (when: Date) : Array<DayType> => {
-  console.log('getting days in month for ', when.toISOString())
+  //console.log('getting days in month for ', when.toISOString())
   let r: Array<DayType> = []
   let month = when.getMonth()
   let year = when.getFullYear()
@@ -39,7 +40,8 @@ export const get_days_in_month = (when: Date) : Array<DayType> => {
   while (d.getMonth() == month) {
     r.push({
       DayInMonth: i,
-      DayInWeek: d.getDay()
+      DayInWeek: d.getDay(),
+      Selected: false,
     })
     i++
     d = new Date(year, month, i)
@@ -48,14 +50,15 @@ export const get_days_in_month = (when: Date) : Array<DayType> => {
 }
 
 export const get_days_in_week = (when: Date) : Array<DayType> => {
-  console.log('getting days in week for ', when.toISOString())
+  //console.log('getting days in week for ', when.toISOString())
   let start = new Date(when.setDate(when.getDate() - when.getDay()))
   let r: Array<DayType> = []
   for (let i = 0; i < 7; i++) {
     let d : Date = new Date(start.setDate(when.getDate() + i))
     r.push({
       DayInMonth: d.getDate(),
-      DayInWeek: d.getDay()
+      DayInWeek: d.getDay(),
+      Selected: false,
     })
   }
   return r

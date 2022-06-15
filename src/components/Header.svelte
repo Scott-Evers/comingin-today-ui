@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Link } from 'svelte-navigator'
   import { createEventDispatcher } from 'svelte'
-  import Components from '.'
+  import * as Components from '.'
   import * as Buttons from './Buttons'
 
   export let user

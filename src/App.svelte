@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Router, Route, Link } from 'svelte-navigator'
-	import Components from './components'
+	import * as Components from './components'
 	import Pages from './pages'
   import * as security from './lib/security'
   import * as FBUtils from './lib/fb_util'

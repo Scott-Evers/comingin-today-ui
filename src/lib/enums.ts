@@ -3,3 +3,9 @@ export enum ScreenModes {
   Edit,
   Create,
 }
+
+export enum CalendarModes {
+  Month,
+  Week,
+  Day,
+}

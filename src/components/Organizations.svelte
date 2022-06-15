@@ -4,7 +4,7 @@ import * as FBTypes from '../lib/fb_types'
 import * as Buttons from './Buttons'
 import { User } from '../lib/stores'
 import { ScreenModes } from "../lib/enums"
-import Components from '.'
+import * as Components from '.'
 import { each } from 'svelte/internal'
 import Organization from './Organization.svelte';
 import type { DocumentReference } from 'firebase/firestore';

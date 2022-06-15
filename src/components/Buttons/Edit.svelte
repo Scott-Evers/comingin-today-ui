@@ -5,7 +5,7 @@
 </script>
 
 
-<span class={classes.join(' ')} style={style}>edit</span>
+<span on:click class={classes.join(' ')} style={style}>edit</span>
 
 
 <style>

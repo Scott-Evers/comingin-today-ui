@@ -1,24 +1,11 @@
-import Header from './Header.svelte'
-import Footer from './Footer.svelte'
-import DayOfMonthCard from './DayOfMonthCard.svelte'
-import DayOfWeekCard from './DayOfWeekCard.svelte'
-import Month from './Month.svelte'
-import Week from './Week.svelte'
-import PrivateRoute from './PrivateRoute.svelte'
-import UserFlyover from './UserFlyover.svelte'
-import Organizations from './Organizations.svelte'
-import Organization from './Organization.svelte'
-
-
-export default {
-  Header,
-  Footer,
-  DayOfMonthCard,
-  DayOfWeekCard,
-  Month,
-  Week,
-  PrivateRoute,
-  UserFlyover,
-  Organizations,
-  Organization,
-}
+export { default as Header } from './Header.svelte'
+export { default as Footer } from './Footer.svelte'
+export { default as DayCard } from './DayCard.svelte'
+export { default as Month } from './Month.svelte'
+export { default as Week } from './Week.svelte'
+export { default as PrivateRoute } from './PrivateRoute.svelte'
+export { default as UserFlyover } from './UserFlyover.svelte'
+export { default as Organizations } from './Organizations.svelte'
+export { default as Organization } from './Organization.svelte'
+export { default as LocationList } from './LocationList.svelte'
+export { default as WeekHeader } from './WeekHeader.svelte'

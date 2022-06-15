@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Components from '../components'
+  import * as Components from '../components'
 
 
 </script>

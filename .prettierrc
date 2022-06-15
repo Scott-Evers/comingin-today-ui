@@ -1,0 +1,8 @@
+{
+  "printWidth": 120,
+  "svelteBracketNewLine": false,
+  "svelteIndentScriptAndStyle": true,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all"
+}
