@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Debug Local",
       "url": "http://localhost:51640",
-      "webRoot": "${workspaceFolder}/public",
+      "webRoot": "${workspaceFolder}/src",
       "userDataDir": "/Users/severs/tmp/chrome/profile/debug"
     }
   ]

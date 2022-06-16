@@ -1,31 +1,34 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import * as Buttons from './Buttons'
+  import * as FBTypes from '../lib/fb_types'
+  import Button, { ButtonTypes } from './Buttons'
+  import { CurrentUserOrgs } from '../lib/stores'
 
-  export let list = [
-    { id: '1', name: 'HQ', selected: false },
-    { id: '2', name: 'Branch one', selected: false },
-    { id: '3', name: 'The bar', selected: false },
-    { id: '4', name: 'Behind the building', selected: false },
-    { id: '5', name: 'Clubhouse', selected: false },
-  ]
+  const get_locations = async (): Promise<FBTypes.Locations> => {
+    let locs: FBTypes.Locations = new FBTypes.Locations()
+    await $CurrentUserOrgs.forEach(async (org) => {
+      await org.Locations.forEach((loc) => {
+        loc.Name = `${loc.Name} (${org.Name})`
+        locs.push(loc)
+      })
+    })
+    return locs
+  }
 
   const dispatch = createEventDispatcher()
 </script>
 
 <div class="background">
   <div class="list_container">
-    {#each list as location, i}
-      <div class="location" on:click={() => dispatch('selected', location)}>
-        <div class="material-symbols-outlined" style="font-size: 1em;">
-          {location.selected ? 'check_box' : 'check_box_outline_blank'}
+    {#await get_locations() then list}
+      {#each list as location}
+        <div class="location" on:click={() => dispatch('selected', location)}>
+          {location.Name}
         </div>
-        &nbsp;
-        {location.name}
-      </div>
-    {/each}
+      {/each}
+    {/await}
     <div style="position: absolute; top: 0; right: 0; margin: 1em;">
-      <Buttons.Close on:click={() => dispatch('cancel', null)} />
+      <Button type={ButtonTypes.Close} on:click={() => dispatch('cancel', null)} />
     </div>
   </div>
 </div>
@@ -70,11 +73,5 @@
   }
   .location:hover {
     background-color: var(--muted-color-2);
-  }
-  .button_cancel {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 12;
   }
 </style>

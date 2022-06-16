@@ -27,7 +27,7 @@ const converter = (t, mapping) => {
               break;
             case FIELD_TYPES.REF:
               console.log('o key',o[key])
-              r[mapping[key].key] = o[key]
+              r[mapping[key].key] = o[key].Ref
               break;
           }
         //}
@@ -223,13 +223,43 @@ export class User {
   private static FIELD_MAPPING = {
     ID: { type: FIELD_TYPES.DIRECT, key: 'id'},
     Nickname: { type: FIELD_TYPES.DATA, key: 'nickname'},
+    DisplayName: { type: FIELD_TYPES.DATA, key: 'display_name'},
+    ThumbnaillUrl: { type: FIELD_TYPES.DATA, key: 'thumbnail'},
     Ref: { type: FIELD_TYPES.DIRECT, key: 'ref'},
   }
   public static CONVERTER = converter(Org,this.FIELD_MAPPING)
 
+  constructor() {
+  }
+
   ID: string = ''
   Nickname: string = ''
+  DisplayName: string = ''
+  ThumbnailUrl: string = ''
   Ref: DocumentReference
+
+  public intit = async (dr? : DocumentReference, id? : string) => {
+
+    if (dr || id) {
+      if (id && !dr) dr = doc(db,User.COLLECTION_NAME,id)
+      //console.log(dr)
+      let o : DocumentSnapshot<User> = (await getDoc(dr.withConverter(User.CONVERTER))).data()
+    let fields = Object.keys(User.FIELD_MAPPING)
+    fields.forEach(element => {
+      this[element] = o[element]
+    })
+  }
+  }
+}
+export class Users extends Array<User> {
+  public static search = async (val : string) : Promise<Users> => {
+    let users = new Users()
+    let user = new User()
+    await user.intit(null,'xJUlZHqGU5a0SguF90HhUiqYLXMz')
+    users.push(user)
+    users.push(user)
+    return users
+  }
 }
 
 export class Member {
@@ -303,6 +333,86 @@ export class Members extends Array<Member> {
     await qr.docs.forEach(async result => {
       await result.data().User
       r.push(new Member(result))
+    })
+    return r
+  }
+
+}
+
+export class Attendance {
+  public static readonly COLLECTION_NAME : string = 'attendance'
+  private static FIELD_MAPPING = {
+    ID: { type: FIELD_TYPES.DIRECT, key: 'id'},
+    User: { type: FIELD_TYPES.REF, key: 'user', cls: User},
+    Location: { type: FIELD_TYPES.REF, key: 'locatoin', cls: Location},
+    Date: { type: FIELD_TYPES.DATA, key: 'date'},
+  }
+  public static CONVERTER = converter(Attendance,this.FIELD_MAPPING)
+
+  ID : string = ''
+  User : User
+  Location : Location
+  Date : Date
+  Ref : DocumentReference
+
+  constructor(doc? : DocumentSnapshot) {
+    if (doc) {
+      return doc.data() as Attendance
+    }
+  }
+  public async init(dr? : DocumentReference, att_id?: string, cb?: CallableFunction)
+        : Promise<Attendance> {
+    console.debug('Attendance.init')
+    if (att_id && ! dr) dr = doc(db,Attendance.COLLECTION_NAME,att_id)
+    if (dr) {
+
+      let att : DocumentSnapshot<Attendance> = (await getDoc(dr.withConverter(Attendance.CONVERTER))).data()
+      console.log('att pre mapping',att)
+      let fields = Object.keys(Attendance.FIELD_MAPPING)
+      fields.forEach(element => {
+        this[element] = att[element]
+      })
+      return this
+    }
+
+    }
+
+    public async save() {
+
+      if (this.Ref) {} else {
+
+        // new for an org
+        let nr = await addDoc(collection(db, Attendance.COLLECTION_NAME)
+          .withConverter(Attendance.CONVERTER),this)
+          console.log('nr (new)',nr)
+          let att : DocumentSnapshot<Attendance> = (await getDoc(nr.withConverter(Attendance.CONVERTER)))
+          .data()
+          console.log('new',att)
+          let fields = Object.keys(Attendance.FIELD_MAPPING)
+          fields.forEach(element => {
+            this[element] = att[element]
+          })
+        }
+
+    }
+    public async delete() {
+        await deleteDoc(this.Ref)
+    }
+
+}
+export class Attendances extends Array<Attendance> {
+  public static load_for_timeframe = async (user: User, 
+              orgs: Orgs, start: Date, end: Date) : Promise<Attendances> => {
+    let r = new Attendances()
+    const col = collection(db,Attendance.COLLECTION_NAME)
+
+    console.log({user})
+    let q = query(col, where('user','==',user.Ref)).withConverter(Attendance.CONVERTER)
+    let qr : QuerySnapshot = await getDocs(q)
+    console.log({qr})
+    await qr.docs.forEach(async result => {
+      let d = await result.data()
+      console.log({d})
     })
     return r
   }

@@ -2,15 +2,14 @@
   import { Link } from 'svelte-navigator'
   import { createEventDispatcher } from 'svelte'
   import * as Components from '.'
-  import * as Buttons from './Buttons'
+  import Button, { ButtonTypes } from './Buttons'
 
   export let user
 
   const dispatch = createEventDispatcher()
   let flyover_visible = false
 
-  const toggle_flyover = () => flyover_visible = !flyover_visible
-
+  const toggle_flyover = () => (flyover_visible = !flyover_visible)
 </script>
 
 <header>
@@ -20,19 +19,18 @@
         <Link to="/">Home</Link>
         <Link to="calendar">Calendar</Link>
       </nav>
-      <Link to="/settings"><Buttons.Settings /></Link>
-      <Buttons.User on:click={toggle_flyover} />
+      <Link to="/settings"><Button type={ButtonTypes.Settings} /></Link>
+      <Button type={ButtonTypes.User} on:click={toggle_flyover} />
     {:else}
-      <div></div>
+      <div />
       <nav>
         <Link to="/login">Login</Link>
       </nav>
-      {/if}
+    {/if}
     {#if flyover_visible}
       <Components.UserFlyover on:logout />
     {/if}
   </div>
-
 </header>
 
 <style>
@@ -43,10 +41,6 @@
   }
   .navbar > nav {
     display: flex;
-    flex-direction: row;    
-  }
-
-  .user_icon {
-    cursor: pointer;
+    flex-direction: row;
   }
 </style>

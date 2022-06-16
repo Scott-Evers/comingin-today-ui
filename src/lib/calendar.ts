@@ -4,6 +4,7 @@ export type DayType = {
   DayInMonth: number,
   DayInWeek: number,
   Selected: boolean,
+  Date: Date
 }
 export enum CalType {
   Month,
@@ -42,6 +43,7 @@ export const get_days_in_month = (when: Date) : Array<DayType> => {
       DayInMonth: i,
       DayInWeek: d.getDay(),
       Selected: false,
+      Date: d,
     })
     i++
     d = new Date(year, month, i)
@@ -59,6 +61,7 @@ export const get_days_in_week = (when: Date) : Array<DayType> => {
       DayInMonth: d.getDate(),
       DayInWeek: d.getDay(),
       Selected: false,
+      Date: d,
     })
   }
   return r
